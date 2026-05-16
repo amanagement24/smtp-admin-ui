@@ -1,0 +1,11 @@
+{
+  "address": ":8080",
+  "sessionTimeout": 1800,
+  "db": {
+    "machine": "localhost",
+    "port": 3306,
+    "database": "smtp",
+    "login": "smtp",
+    "password": "smtp"
+  }
+}

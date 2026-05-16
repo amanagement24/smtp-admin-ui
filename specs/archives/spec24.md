@@ -1,0 +1,4 @@
+- when you add a new user, automatically add a new mailbox called INBOX with all the other flags N (false)
+- when you edit the user, in the edit user screen in edit mode only, list the mailboxes the user has
+- you list them in a html table with first column the mailbox name
+- the second column has a list of flags associated with the mailbox, for example if only trash is set, then you see there only trash. If there are two, you see the two and nothing else

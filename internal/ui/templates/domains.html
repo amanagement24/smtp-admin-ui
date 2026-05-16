@@ -1,0 +1,42 @@
+{{define "content"}}
+<div class="content">
+    <h1>Domains</h1>
+
+    <form method="post" action="/domains">
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>&nbsp</th>
+            <th>Name</th>
+            <th>Catch all</th>
+            <th>Catch all<br/>login</th>
+            <th>Edit</th>
+            <th>View</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{if .Domains}}
+        {{range .Domains}}
+        <tr>
+            <td><input type="checkbox" name="selected" value="{{.DomainID}}" {{if index $.Selected .DomainID}}checked{{end}}></td>
+            <td>{{.Name}}</td>
+            <td>{{if .CatchAll}}Yes{{else}}No{{end}}</td>
+            <td>{{.CatchallLogin}}</td>
+            <td><a href="/editdomain?id={{.DomainID}}">edit</a></td>
+            <td><a href="/viewdomain?id={{.DomainID}}">view</a></td>
+        </tr>
+        {{end}}
+        {{else}}
+        <tr>
+            <td colspan="6">no items</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <div class="btn-row">
+        <input class="btn" type="submit" value="Add" name="add">
+        <input class="btn btn-delete" type="submit" value="Delete" name="delete">
+    </div>
+    </form>
+</div>
+{{end}}

@@ -1,0 +1,4 @@
+- @views.go create RenderDomains that will use an instance of ViewDomains
+- please try to code the domains.html mapping the list of domains in ViewDomains over the table provided. If the list is empty show a line with "no items" written in it
+- create RenderDomains function same approach as RenderLogin
+- please confirm the templates are loaded from memory from embedded values not from disk

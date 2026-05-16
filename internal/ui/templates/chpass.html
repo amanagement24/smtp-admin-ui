@@ -1,0 +1,19 @@
+{{define "content"}}
+<div class="content">
+    <h1>Change Password</h1>
+    {{if .Success}}<h2>The password has been successfully updated</h2>{{end}}
+    <h2>User: {{.User.Login}}</h2>
+
+    <form class="form" method="post" action="/chpass">
+        <input name="id" type="hidden" value="{{.User.UserID}}">
+        <label class="form-label" for="idnewpass">New Password</label>
+        <input class="form-input" id="idnewpass" type="password" name="new_password">
+        <label class="form-label" for="idrepeat">Repeat</label>
+        <input class="form-input" id="idrepeat" type="password" name="repeat_password">
+        <div class="btn-row">
+            <input class="btn" type="submit" value="Submit" name="submit">
+            <input class="btn btn-cancel" type="submit" value="Cancel" name="cancel">
+        </div>
+    </form>
+</div>
+{{end}}

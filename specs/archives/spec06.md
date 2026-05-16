@@ -1,0 +1,2 @@
+- @views.go create function RenderViewDomain that renders the viewdomain.html using the ViewDomain structure that is defined in this file. 
+- ViewDomain struct is used to render the contents of viewdomain.html please kindly code the template code for viewdomain.html

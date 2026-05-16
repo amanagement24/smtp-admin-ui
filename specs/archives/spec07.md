@@ -1,0 +1,7 @@
+- @views.go I added ViewEditDomain
+- code RenderEditDomain like you did for the others, that will render the full page edit domain
+- that shall be used to render editdomain.html
+- depending on Adding show only Add or Edit in the h1 tag
+- checkbox should be checked based on the CatchAll value
+- rest are text items
+- buttons should be submit, and assign some names

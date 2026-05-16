@@ -1,0 +1,34 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="header">
+    <div class="left">
+        <div class="logo">
+
+        </div>
+        {{if .IsLoggedIn}}
+        <div class="menu">
+            <ul>
+                <li><a href="/logout">Logout</a></li>
+                {{if .IsAdmin}}<li><a href="/domains">Domains</a></li>{{end}}
+            </ul>
+        </div>
+        {{end}}
+    </div>
+    <div class="right">
+        {{if .IsLoggedIn}}{{.ViewHeader.Login}}{{else}}Not Logged In{{end}}
+    </div>
+</div>
+<div class="error">
+    {{.Error}}
+</div>
+{{template "content" .}}
+</body>
+</html>
+{{end}}
