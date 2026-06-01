@@ -1,0 +1,26 @@
+{{define "content"}}
+<div class="content">
+    <h1>{{if .Adding}}Add{{else}}Edit{{end}} Domain</h1>
+
+    <form class="form" action="/editdomain" method="post">
+        <input type="hidden" name="adding" value="{{.Adding}}">
+        <input name="id" type="hidden" value="{{.DomainID}}">
+
+        <label class="form-label" for="iddomain">Domain</label>
+        <input class="form-input" id="iddomain" name="domain" type="text" value="{{.Name}}">
+
+        {{if not .Adding}}
+        <div class="form-check">
+            <input id="idcatchall" name="catchall" type="checkbox"{{if .CatchAll}} checked{{end}}>
+            <label for="idcatchall">Catch All?</label>
+        </div>
+        <label class="form-label" for="iduser">Catch all user</label>
+        <input class="form-input" id="iduser" name="catchall_login" type="text" value="{{.CatchAllLogin}}">
+        {{end}}
+        <div class="btn-row">
+            <input class="btn" type="submit" name="submit" value="Submit">
+            <input class="btn btn-cancel" type="submit" name="cancel" value="Cancel">
+        </div>
+    </form>
+</div>
+{{end}}

@@ -1,0 +1,4 @@
+- @views.go create RenderCdUsers and RenderCdDomains that use respective newly created View structs
+- code cddomains.html and cdusers.html
+- those are the pages that will show the domains or the domain users that are marked for deletion for confirmation
+- from viewcdusers domain take the domain and show it on the page, viewcddomains has only the list

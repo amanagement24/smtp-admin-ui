@@ -1,0 +1,41 @@
+{{define "content"}}
+<div class="content">
+    <h1>{{if .Adding}}Add{{else}}Edit{{end}} User</h1>
+
+    <form class="form" method="post" action="/edituser">
+        <input name="id" type="hidden" value="{{.User.UserID}}">
+        <input name="domain_id" type="hidden" value="{{.User.DomainID}}">
+        <input name="adding" type="hidden" value="{{.Adding}}">
+        <label class="form-label" for="idlogin">Login</label>
+        <input class="form-input" id="idlogin" name="login" type="text" value="{{.User.Login}}">
+        <div class="form-check">
+            <input id="idadmin" name="admin" type="checkbox"{{if .User.Admin}} checked{{end}}>
+            <label for="idadmin">Admin?</label>
+        </div>
+
+        {{if not .Adding}}
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Mailbox</th>
+                <th>Flags</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .Mailboxes}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{range $i, $f := .Flags}}{{if $i}}, {{end}}{{$f}}{{end}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+        {{end}}
+
+        <div class="btn-row">
+            <input class="btn" type="submit" name="submit" value="Submit">
+            <input class="btn btn-cancel" type="submit" name="cancel" value="Cancel">
+        </div>
+    </form>
+</div>
+{{end}}

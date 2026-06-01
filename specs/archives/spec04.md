@@ -1,0 +1,3 @@
+- @views.go create RenderChPass that will use an instance of ViewChPass
+- please try to code the chpass.html show the passed user, and will accept the password and repeat password, please put name in those fields
+- create  function RenderChPass same approach as RenderLogin

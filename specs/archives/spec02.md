@@ -1,0 +1,3 @@
+- look in ddl.sql and for each table create a value object that keeps the data. 
+- fields with _ind must be mapped to bool, true if value is y or Y, false otherwise
+- for now just create the struct types. They can be in a file under internal/service

@@ -1,0 +1,3 @@
+- @service/service.go
+- implement struct type called Svc that holds a sql db instance
+- implement NewService that returns the instance of Svc

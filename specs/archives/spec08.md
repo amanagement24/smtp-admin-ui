@@ -1,0 +1,7 @@
+- @views.go I added ViewEditUser
+- code RederEditUser like you did for the others, that will render the full page edit user
+- that shall be used to render edituser.html
+- depending on Adding show only Add or Edit in the h1 tag
+- rest are text items
+- buttons should be submit, and assign some names
+- 

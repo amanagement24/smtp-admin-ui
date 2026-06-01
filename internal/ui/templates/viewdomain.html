@@ -1,0 +1,58 @@
+{{define "content"}}
+<div class="content">
+    <h1>Domain</h1>
+    <h2>{{.Domain.Name}}</h2>
+    <table class="data-table">
+        <tr>
+            <td>Name</td>
+            <td>{{.Domain.Name}}</td>
+        </tr>
+        <tr>
+            <td>Catch All?</td>
+            <td>{{if .Domain.CatchAll}}Yes{{else}}No{{end}}</td>
+        </tr>
+        <tr>
+            <td>Catch All Login</td>
+            <td>{{.Domain.CatchallLogin}}</td>
+        </tr>
+    </table>
+
+    <h2>Users</h2>
+    <form method="post" action="/viewdomain">
+    <input type="hidden" name="domain_id" value="{{.Domain.DomainID}}">
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Edit</th>
+            <th>Password</th>
+            <th>Name</th>
+            <th>Admin</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{if .Users}}
+        {{range .Users}}
+        <tr>
+            <td><input type="checkbox" name="selected" value="{{.UserID}}"{{if index $.Selected .UserID}} checked{{end}}></td>
+            <td><a href="/edituser?id={{ .UserID }}">Edit</a></td>
+            <td><a href="/chpass?id={{ .UserID }}">Password</a></td>
+            <td>{{.Login}}</td>
+            <td>{{if .Admin}}Yes{{else}}No{{end}}</td>
+        </tr>
+        {{end}}
+        {{else}}
+        <tr>
+            <td colspan="5">No users...</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <div class="btn-row">
+        <input class="btn" type="submit" name="add" value="Add User">
+        <input class="btn btn-delete" type="submit" name="delete" value="Delete User">
+        <input class="btn btn-cancel" type="submit" name="back" value="Back">
+    </div>
+    </form>
+</div>
+{{end}}
