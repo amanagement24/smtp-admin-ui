@@ -1,33 +1,52 @@
 name: build accounting backend
 run-name: build accounting backend
+
 on:
   push:
     branches:
       - main
+
 jobs:
-  docker_login:
+  build_and_push:
     runs-on: ubuntu-latest
     name: build accounting backend project
     steps:
-      - name: code checkout
-        uses: actions/checkout@v4.2.2
+      # 1. Checkout the repository code
+      - name: Code checkout
+        uses: actions/checkout@v4
 
-      - name: build
-        run: |
-          echo github run number: ${GITHUB_RUN_NUMBER}
-          echo $(pwd)
-          GOARCH=amd64 GOOS=linux CGO_ENABLED=0 docker run -v $(pwd):/alfa -w /alfa 1.26.3-alpine3.23 go build -o smtp_admin_ui ./main.go
-          docker build . -t 169533462518.dkr.ecr.us-east-2.amazonaws.com/smtp-admin-ui:1.0.${GITHUB_RUN_NUMBER}
-          docker image ls
+      # 2. Set up Go natively (Much faster and cleaner than running a manual 'docker run go')
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22' # Adjusted to a stable modern version, change to your exact version if needed
 
-      - name: docker login
+      # 3. Build the Go Binary natively
+      - name: Build Go binary
         run: |
-          val=$(AWS_ACCESS_KEY_ID=${{secrets.DOCKER_AWS_KEY}} AWS_SECRET_ACCESS_KEY=${{secrets.DOCKER_AWS_SECRET}} aws ecr get-login-password --region us-east-2)
-          echo "val=$val" >> $GITHUB_ENV
-          echo $val | docker login --username AWS --password-stdin 169533462518.dkr.ecr.us-east-2.amazonaws.com
-          docker image ls
+          echo "GitHub run number: ${GITHUB_RUN_NUMBER}"
+          GOARCH=amd64 GOOS=linux CGO_ENABLED=0 go build -o smtp_admin_ui ./main.go
 
-      - name: docker push
+      # 4. Configure AWS Credentials safely (Stops the deprecation warnings)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DOCKER_AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.DOCKER_AWS_SECRET }}
+          aws-region: us-east-2
+
+      # 5. Log into Amazon ECR natively
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 6. Build, tag, and push the image to ECR
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: 169533462518.dkr.ecr.us-east-2.amazonaws.com
+          ECR_REPOSITORY: smtp-admin-ui
+          IMAGE_TAG: 1.0.${{ github.run_number }}
         run: |
-          docker image push 169533462518.dkr.ecr.us-east-2.amazonaws.com/smtp-admin-ui:1.0.${GITHUB_RUN_NUMBER}
-          echo docker pushed successfully
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "Docker image pushed successfully!"
