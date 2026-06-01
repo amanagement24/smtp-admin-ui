@@ -2,7 +2,7 @@
 <div class="content">
     <h1>Domains</h1>
 
-    <form method="post" action="/domains">
+    <form method="post" action="{{.Context}}/domains">
     <table class="data-table">
         <thead>
         <tr>
@@ -22,8 +22,8 @@
             <td>{{.Name}}</td>
             <td>{{if .CatchAll}}Yes{{else}}No{{end}}</td>
             <td>{{.CatchallLogin}}</td>
-            <td><a href="/editdomain?id={{.DomainID}}">edit</a></td>
-            <td><a href="/viewdomain?id={{.DomainID}}">view</a></td>
+            <td><a href="{{$.Context}}/editdomain?id={{.DomainID}}">edit</a></td>
+            <td><a href="{{$.Context}}/viewdomain?id={{.DomainID}}">view</a></td>
         </tr>
         {{end}}
         {{else}}

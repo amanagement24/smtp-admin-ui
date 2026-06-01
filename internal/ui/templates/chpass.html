@@ -4,7 +4,7 @@
     {{if .Success}}<h2>The password has been successfully updated</h2>{{end}}
     <h2>User: {{.User.Login}}</h2>
 
-    <form class="form" method="post" action="/chpass">
+    <form class="form" method="post" action="{{.Context}}/chpass">
         <input name="id" type="hidden" value="{{.User.UserID}}">
         <label class="form-label" for="idnewpass">New Password</label>
         <input class="form-input" id="idnewpass" type="password" name="new_password">

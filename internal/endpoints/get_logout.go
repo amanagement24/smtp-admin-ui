@@ -12,8 +12,5 @@ func (c *Controller) GetLogout(w http.ResponseWriter, r *http.Request) {
 	// clear the session
 	session.Clear()
 
-	ui.RenderLogin(w, ui.ViewLogin{
-		ViewHeader: ui.ViewHeader{},
-		Login:      "",
-	})
+	ui.RenderLogin(w, session.NewViewLogin("", ""))
 }

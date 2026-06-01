@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{.Context}}/static/style.css">
 </head>
 <body>
 <div class="header">
@@ -15,8 +15,8 @@
         {{if .IsLoggedIn}}
         <div class="menu">
             <ul>
-                <li><a href="/logout">Logout</a></li>
-                {{if .IsAdmin}}<li><a href="/domains">Domains</a></li>{{end}}
+                <li><a href="{{.Context}}/logout">Logout</a></li>
+                {{if .IsAdmin}}<li><a href="{{.Context}}/domains">Domains</a></li>{{end}}
             </ul>
         </div>
         {{end}}

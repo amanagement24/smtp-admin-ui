@@ -11,6 +11,7 @@ import (
 )
 
 type SessionStore struct {
+	Context         string
 	Created         time.Time
 	Expired         bool
 	User            *service.User
@@ -56,12 +57,14 @@ func (s *SessionStore) Clear() {
 type AppSession struct {
 	sessionMap map[string]*SessionStore
 	timeout    time.Duration
+	context    string
 }
 
-func NewSessionStore(sessionTimeoutSeconds int) *AppSession {
+func NewSessionStore(sessionTimeoutSeconds int, context string) *AppSession {
 	return &AppSession{
 		sessionMap: make(map[string]*SessionStore),
 		timeout:    time.Duration(sessionTimeoutSeconds) * time.Second,
+		context:    context,
 	}
 }
 
@@ -87,7 +90,7 @@ func (a *AppSession) GetSession(r *http.Request, w http.ResponseWriter) *Session
 		}
 	}
 
-	store := &SessionStore{Created: time.Now()}
+	store := &SessionStore{Created: time.Now(), Context: a.context}
 	key := newSessionKey()
 	http.SetCookie(w, &http.Cookie{
 		Name:     "smtpadmin",

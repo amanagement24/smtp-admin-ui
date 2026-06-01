@@ -2,7 +2,7 @@
 <div class="content">
     <h1>{{if .Adding}}Add{{else}}Edit{{end}} Domain</h1>
 
-    <form class="form" action="/editdomain" method="post">
+    <form class="form" action="{{.Context}}/editdomain" method="post">
         <input type="hidden" name="adding" value="{{.Adding}}">
         <input name="id" type="hidden" value="{{.DomainID}}">
 

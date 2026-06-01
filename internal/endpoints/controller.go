@@ -29,25 +29,13 @@ func checkLoggedIn(w http.ResponseWriter, session *ui.SessionStore, checkAdmin b
 			session.Expired = false
 		}
 
-		ui.RenderLogin(w, ui.ViewLogin{
-			ViewHeader: ui.ViewHeader{
-				Login: "",
-				Error: errMsg,
-			},
-			Login: "",
-		})
+		ui.RenderLogin(w, session.NewViewLogin(errMsg, ""))
 
 		res = false
 	}
 
 	if res && checkAdmin && !session.IsAdmin() {
-		ui.RenderLogin(w, ui.ViewLogin{
-			ViewHeader: ui.ViewHeader{
-				Login: "",
-				Error: "this functionality is for admin users only",
-			},
-			Login: "",
-		})
+		ui.RenderLogin(w, session.NewViewLogin("this functionality is for admin users only", ""))
 
 		res = false
 	}

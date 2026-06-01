@@ -24,6 +24,7 @@ type DbConfig struct {
 
 type ConfigData struct {
 	Address        string   `json:"address"`
+	Context        string   `json:"context"`
 	SessionTimeout int      `json:"sessionTimeout"`
 	Db             DbConfig `json:"db"`
 }
@@ -58,26 +59,27 @@ func main() {
 	}
 
 	svc := service.NewService(db)
-	session := ui.NewSessionStore(cfg.SessionTimeout)
+	session := ui.NewSessionStore(cfg.SessionTimeout, cfg.Context)
 	ctrl := endpoints.NewController(svc, session)
 
+	ctx := cfg.Context
 	mux := http.NewServeMux()
-	mux.Handle("GET /static/", ui.StaticHandler())
-	mux.HandleFunc("GET /", ctrl.GetRoot)
-	mux.HandleFunc("POST /login", ctrl.PostLogin)
-	mux.HandleFunc("GET /logout", ctrl.GetLogout)
-	mux.HandleFunc("GET /editdomain", ctrl.GetEditDomain)
-	mux.HandleFunc("POST /editdomain", ctrl.PostEditDomain)
-	mux.HandleFunc("GET /edituser", ctrl.GetEditUser)
-	mux.HandleFunc("POST /edituser", ctrl.PostEditUser)
-	mux.HandleFunc("GET /chpass", ctrl.GetChpass)
-	mux.HandleFunc("POST /chpass", ctrl.PostChpass)
-	mux.HandleFunc("GET /domains", ctrl.GetDomains)
-	mux.HandleFunc("POST /domains", ctrl.PostDomains)
-	mux.HandleFunc("POST /cddomains", ctrl.PostCdDomains)
-	mux.HandleFunc("POST /cdusers", ctrl.PostCdUsers)
-	mux.HandleFunc("GET /viewdomain", ctrl.GetViewDomain)
-	mux.HandleFunc("POST /viewdomain", ctrl.PostViewDomain)
+	mux.Handle("GET "+ctx+"/static/", http.StripPrefix(ctx, ui.StaticHandler()))
+	mux.HandleFunc("GET "+ctx+"/", ctrl.GetRoot)
+	mux.HandleFunc("POST "+ctx+"/login", ctrl.PostLogin)
+	mux.HandleFunc("GET "+ctx+"/logout", ctrl.GetLogout)
+	mux.HandleFunc("GET "+ctx+"/editdomain", ctrl.GetEditDomain)
+	mux.HandleFunc("POST "+ctx+"/editdomain", ctrl.PostEditDomain)
+	mux.HandleFunc("GET "+ctx+"/edituser", ctrl.GetEditUser)
+	mux.HandleFunc("POST "+ctx+"/edituser", ctrl.PostEditUser)
+	mux.HandleFunc("GET "+ctx+"/chpass", ctrl.GetChpass)
+	mux.HandleFunc("POST "+ctx+"/chpass", ctrl.PostChpass)
+	mux.HandleFunc("GET "+ctx+"/domains", ctrl.GetDomains)
+	mux.HandleFunc("POST "+ctx+"/domains", ctrl.PostDomains)
+	mux.HandleFunc("POST "+ctx+"/cddomains", ctrl.PostCdDomains)
+	mux.HandleFunc("POST "+ctx+"/cdusers", ctrl.PostCdUsers)
+	mux.HandleFunc("GET "+ctx+"/viewdomain", ctrl.GetViewDomain)
+	mux.HandleFunc("POST "+ctx+"/viewdomain", ctrl.PostViewDomain)
 
 	log.Printf("listening on %s", cfg.Address)
 	if err := http.ListenAndServe(cfg.Address, mux); err != nil {

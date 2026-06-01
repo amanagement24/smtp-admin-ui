@@ -1,5 +1,6 @@
 {
   "address": ":8080",
+  "context": "/smtp",
   "sessionTimeout": 1800,
   "db": {
     "machine": "localhost",

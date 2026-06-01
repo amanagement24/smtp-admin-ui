@@ -18,7 +18,7 @@
     </table>
 
     <h2>Users</h2>
-    <form method="post" action="/viewdomain">
+    <form method="post" action="{{.Context}}/viewdomain">
     <input type="hidden" name="domain_id" value="{{.Domain.DomainID}}">
     <table class="data-table">
         <thead>
@@ -35,8 +35,8 @@
         {{range .Users}}
         <tr>
             <td><input type="checkbox" name="selected" value="{{.UserID}}"{{if index $.Selected .UserID}} checked{{end}}></td>
-            <td><a href="/edituser?id={{ .UserID }}">Edit</a></td>
-            <td><a href="/chpass?id={{ .UserID }}">Password</a></td>
+            <td><a href="{{$.Context}}/edituser?id={{ .UserID }}">Edit</a></td>
+            <td><a href="{{$.Context}}/chpass?id={{ .UserID }}">Password</a></td>
             <td>{{.Login}}</td>
             <td>{{if .Admin}}Yes{{else}}No{{end}}</td>
         </tr>

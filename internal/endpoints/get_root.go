@@ -17,12 +17,6 @@ func (c *Controller) GetRoot(w http.ResponseWriter, r *http.Request) {
 			errMsg = "session expired"
 			session.Expired = false
 		}
-		ui.RenderLogin(w, ui.ViewLogin{
-			ViewHeader: ui.ViewHeader{
-				Login: "",
-				Error: errMsg,
-			},
-			Login: "",
-		})
+		ui.RenderLogin(w, session.NewViewLogin(errMsg, ""))
 	}
 }

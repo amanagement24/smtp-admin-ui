@@ -20,9 +20,10 @@ func StaticHandler() http.Handler {
 }
 
 type ViewHeader struct {
-	Login string
-	Error string
-	Admin bool
+	Login   string
+	Error   string
+	Admin   bool
+	Context string
 }
 
 func (v ViewHeader) IsLoggedIn() bool {

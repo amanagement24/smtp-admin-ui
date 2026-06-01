@@ -19,13 +19,7 @@ func (c *Controller) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	err := c.processPostLogin(w, session, login, password)
 	if err != nil {
-		ui.RenderLogin(w, ui.ViewLogin{
-			ViewHeader: ui.ViewHeader{
-				Login: login,
-				Error: err.Error(),
-			},
-			Login: login,
-		})
+		ui.RenderLogin(w, session.NewViewLogin(err.Error(), login))
 	}
 
 }
