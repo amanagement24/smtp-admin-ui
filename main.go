@@ -4,14 +4,17 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
+	"io"
+	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/dgb9/smtp-admin/internal/endpoints"
 	"github.com/dgb9/smtp-admin/internal/service"
 	"github.com/dgb9/smtp-admin/internal/ui"
 	_ "github.com/go-sql-driver/mysql"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type DbConfig struct {
@@ -22,40 +25,69 @@ type DbConfig struct {
 	Password string `json:"password"`
 }
 
+type LogConfig struct {
+	FileLogEnabled bool   `json:"fileLogEnabled"`
+	FileName       string `json:"fileName"`
+	MaxSize        int    `json:"maxSize"`
+	MaxBackups     int    `json:"maxBackups"`
+	MaxDays        int    `json:"maxDays"`
+	Compress       bool   `json:"compress"`
+}
+
 type ConfigData struct {
-	Address        string   `json:"address"`
-	Context        string   `json:"context"`
-	SessionTimeout int      `json:"sessionTimeout"`
-	Db             DbConfig `json:"db"`
+	Address        string    `json:"address"`
+	Context        string    `json:"context"`
+	SessionTimeout int       `json:"sessionTimeout"`
+	Db             DbConfig  `json:"db"`
+	Log            LogConfig `json:"log"`
 }
 
 func main() {
 	cfgPath := os.Getenv("CONFIG_FILE")
-	if cfgPath == "" {
-		cfgPath = "/config/config.json"
+	cfgPath = strings.TrimSpace(cfgPath)
+	if len(cfgPath) == 0 {
+		slog.Error("CONFIG_FILE environment variable not set")
+		os.Exit(1)
 	}
 
 	data, err := os.ReadFile(cfgPath)
 	if err != nil {
-		log.Fatalf("read config: %v", err)
+		slog.Error("read config", "err", err)
+		os.Exit(1)
 	}
 
 	var cfg ConfigData
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		log.Fatalf("parse config: %v", err)
+		slog.Error("parse config", "err", err)
+		os.Exit(1)
 	}
+
+	var logOut io.Writer = os.Stdout
+	if cfg.Log.FileLogEnabled {
+		lj := &lumberjack.Logger{
+			Filename:   cfg.Log.FileName,
+			MaxSize:    cfg.Log.MaxSize,
+			MaxBackups: cfg.Log.MaxBackups,
+			MaxAge:     cfg.Log.MaxDays,
+			Compress:   cfg.Log.Compress,
+		}
+		logOut = io.MultiWriter(os.Stdout, lj)
+	}
+	slog.SetDefault(slog.New(slog.NewTextHandler(logOut, nil)))
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
 		cfg.Db.Login, cfg.Db.Password, cfg.Db.Machine, cfg.Db.Port, cfg.Db.Database)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatalf("open db: %v", err)
+		slog.Error("open db", "err", err)
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Fatalf("db ping: %v", err)
+		slog.Error("db ping", "err", err)
+		os.Exit(1)
 	}
 
 	svc := service.NewService(db)
@@ -72,6 +104,8 @@ func main() {
 	mux.HandleFunc("POST "+ctx+"/editdomain", ctrl.PostEditDomain)
 	mux.HandleFunc("GET "+ctx+"/edituser", ctrl.GetEditUser)
 	mux.HandleFunc("POST "+ctx+"/edituser", ctrl.PostEditUser)
+	mux.HandleFunc("GET "+ctx+"/editmailbox", ctrl.GetEditMailbox)
+	mux.HandleFunc("POST "+ctx+"/editmailbox", ctrl.PostEditMailbox)
 	mux.HandleFunc("GET "+ctx+"/chpass", ctrl.GetChpass)
 	mux.HandleFunc("POST "+ctx+"/chpass", ctrl.PostChpass)
 	mux.HandleFunc("GET "+ctx+"/domains", ctrl.GetDomains)
@@ -81,8 +115,9 @@ func main() {
 	mux.HandleFunc("GET "+ctx+"/viewdomain", ctrl.GetViewDomain)
 	mux.HandleFunc("POST "+ctx+"/viewdomain", ctrl.PostViewDomain)
 
-	log.Printf("listening on %s", cfg.Address)
+	slog.Info("listening", "addr", cfg.Address)
 	if err := http.ListenAndServe(cfg.Address, mux); err != nil {
-		log.Fatalf("server: %v", err)
+		slog.Error("server", "err", err)
+		os.Exit(1)
 	}
 }

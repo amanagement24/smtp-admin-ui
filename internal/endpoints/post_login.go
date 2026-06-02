@@ -3,6 +3,7 @@ package endpoints
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -25,6 +26,7 @@ func (c *Controller) PostLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) processPostLogin(w http.ResponseWriter, session *ui.SessionStore, login string, password string) error {
+	slog.Info("login attempt", slog.String("login", login))
 	err := checkLoginParameters(login)
 	if err != nil {
 		return err
@@ -37,13 +39,21 @@ func (c *Controller) processPostLogin(w http.ResponseWriter, session *ui.Session
 	}
 
 	if user == nil {
+		slog.Error("user not found", slog.String("login", login))
+
 		return fmt.Errorf("User %s not found", login)
+	} else {
+		slog.Info("user found", slog.String("login", login))
 	}
 
 	// check password
 	hashedPassword := service.HashPassword(password)
 	if hashedPassword != user.Password {
+		slog.Error("password mismatch", slog.String("login", login))
+
 		return fmt.Errorf("Invalid credentials")
+	} else {
+		slog.Info("login success", slog.String("login", login))
 	}
 
 	session.User = user
@@ -53,6 +63,7 @@ func (c *Controller) processPostLogin(w http.ResponseWriter, session *ui.Session
 		if err != nil {
 			return err
 		}
+
 		session.Domains = domains
 		ui.RenderDomains(w, session.NewViewDomains(""))
 	} else {

@@ -140,3 +140,17 @@ func RenderEditUser(w http.ResponseWriter, v ViewEditUser) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
+type ViewEditMailbox struct {
+	ViewHeader
+	Mailbox   service.Mailbox
+	Adding    bool
+	UserLogin string
+}
+
+func RenderEditMailbox(w http.ResponseWriter, v ViewEditMailbox) {
+	t := template.Must(template.ParseFS(templateFiles, "templates/header.html", "templates/editmailbox.html"))
+	if err := t.ExecuteTemplate(w, "header", v); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
