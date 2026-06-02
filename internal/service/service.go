@@ -346,6 +346,45 @@ func (s Svc) GetMailboxes(userID string) ([]Mailbox, error) {
 	return mailboxes, nil
 }
 
+func (s Svc) GetMailbox(id string) (*Mailbox, error) {
+	const q = `
+		SELECT mailbox_id, user_id, name,
+			flag_non_existent, flag_no_inferiors, flag_no_select, flag_marked,
+			flag_subscribed, flag_remote, flag_archive, flag_drafts,
+			flag_flagged, flag_junk, flag_sent, flag_trash, flag_important
+		FROM mailbox
+		WHERE mailbox_id = ?`
+
+	var m Mailbox
+	var nonExistent, noInferiors, noSelect, marked, subscribed, remote, archive, drafts, flagged, junk, sent, trash, important string
+	err := s.db.QueryRow(q, id).Scan(
+		&m.MailboxID, &m.UserID, &m.Name,
+		&nonExistent, &noInferiors, &noSelect, &marked,
+		&subscribed, &remote, &archive, &drafts,
+		&flagged, &junk, &sent, &trash, &important,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	m.FlagNonExistent = nonExistent == "Y"
+	m.FlagNoInferiors = noInferiors == "Y"
+	m.FlagNoSelect = noSelect == "Y"
+	m.FlagMarked = marked == "Y"
+	m.FlagSubscribed = subscribed == "Y"
+	m.FlagRemote = remote == "Y"
+	m.FlagArchive = archive == "Y"
+	m.FlagDrafts = drafts == "Y"
+	m.FlagFlagged = flagged == "Y"
+	m.FlagJunk = junk == "Y"
+	m.FlagSent = sent == "Y"
+	m.FlagTrash = trash == "Y"
+	m.FlagImportant = important == "Y"
+	return &m, nil
+}
+
 func (s Svc) AddMailbox(m Mailbox) error {
 	m.Name = strings.TrimSpace(m.Name)
 	if m.Name == "" {
@@ -387,12 +426,23 @@ func (s Svc) UpdateMailbox(m Mailbox) error {
 	if m.Name == "" {
 		return errors.New("name must be filled out")
 	}
-	if strings.EqualFold(m.Name, "inbox") {
+
+	var currentName string
+	err := s.db.QueryRow(`SELECT name FROM mailbox WHERE mailbox_id = ?`, m.MailboxID).Scan(&currentName)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return errors.New("mailbox not found")
+		}
+		return err
+	}
+	if strings.EqualFold(currentName, "inbox") {
+		m.Name = currentName
+	} else if strings.EqualFold(m.Name, "inbox") {
 		m.Name = "INBOX"
 	}
 
 	var existing string
-	err := s.db.QueryRow(
+	err = s.db.QueryRow(
 		`SELECT mailbox_id FROM mailbox WHERE user_id = ? AND name = ? AND mailbox_id <> ?`,
 		m.UserID, m.Name, m.MailboxID,
 	).Scan(&existing)

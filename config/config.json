@@ -8,5 +8,13 @@
     "database": "smtp",
     "login": "smtp",
     "password": "smtp"
+  },
+  "log": {
+    "fileLogEnabled": true,
+    "fileName": "/home/daniel/IdeaProjects/smtp-admin-ui/log/smtpadmin.log",
+    "maxSize": 100,
+    "maxBackups": 10,
+    "maxDays": 180,
+    "compress": true
   }
 }

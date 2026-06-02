@@ -77,6 +77,15 @@ func (s *SessionStore) NewViewEditUser(errMsg string, user service.User, mailbox
 	}
 }
 
+func (s *SessionStore) NewViewEditMailbox(errMsg string, mailbox service.Mailbox, adding bool, userLogin string) ViewEditMailbox {
+	return ViewEditMailbox{
+		ViewHeader: ViewHeader{Login: s.GetLogin(), Admin: s.IsAdmin(), Error: errMsg, Context: s.Context},
+		Mailbox:    mailbox,
+		Adding:     adding,
+		UserLogin:  userLogin,
+	}
+}
+
 func (s *SessionStore) NewViewChPass(errMsg string, user service.User, success bool) ViewChPass {
 	return ViewChPass{
 		ViewHeader: ViewHeader{Login: s.GetLogin(), Admin: s.IsAdmin(), Error: errMsg, Context: s.Context},

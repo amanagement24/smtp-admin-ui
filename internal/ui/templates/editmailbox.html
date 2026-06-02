@@ -1,0 +1,75 @@
+{{define "content"}}
+<div class="content">
+    <h1>{{if .Adding}}Add{{else}}Edit{{end}} Mailbox</h1>
+
+    <form class="form" action="{{.Context}}/editmailbox" method="post">
+        <input type="hidden" name="adding" value="{{.Adding}}">
+        <input type="hidden" name="id" value="{{.Mailbox.MailboxID}}">
+        <input type="hidden" name="user_id" value="{{.Mailbox.UserID}}">
+
+        <label class="form-label">User</label>
+        <span class="form-input">{{.UserLogin}}</span>
+
+        <label class="form-label" for="idname">Name</label>
+        <input class="form-input" id="idname" name="name" type="text" value="{{.Mailbox.Name}}">
+
+        <div class="form-check">
+            <input id="idflag_non_existent" name="flag_non_existent" type="checkbox"{{if .Mailbox.FlagNonExistent}} checked{{end}}>
+            <label for="idflag_non_existent">Non-Existent</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_no_inferiors" name="flag_no_inferiors" type="checkbox"{{if .Mailbox.FlagNoInferiors}} checked{{end}}>
+            <label for="idflag_no_inferiors">No Inferiors</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_no_select" name="flag_no_select" type="checkbox"{{if .Mailbox.FlagNoSelect}} checked{{end}}>
+            <label for="idflag_no_select">No Select</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_marked" name="flag_marked" type="checkbox"{{if .Mailbox.FlagMarked}} checked{{end}}>
+            <label for="idflag_marked">Marked</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_subscribed" name="flag_subscribed" type="checkbox"{{if .Mailbox.FlagSubscribed}} checked{{end}}>
+            <label for="idflag_subscribed">Subscribed</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_remote" name="flag_remote" type="checkbox"{{if .Mailbox.FlagRemote}} checked{{end}}>
+            <label for="idflag_remote">Remote</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_archive" name="flag_archive" type="checkbox"{{if .Mailbox.FlagArchive}} checked{{end}}>
+            <label for="idflag_archive">Archive</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_drafts" name="flag_drafts" type="checkbox"{{if .Mailbox.FlagDrafts}} checked{{end}}>
+            <label for="idflag_drafts">Drafts</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_flagged" name="flag_flagged" type="checkbox"{{if .Mailbox.FlagFlagged}} checked{{end}}>
+            <label for="idflag_flagged">Flagged</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_junk" name="flag_junk" type="checkbox"{{if .Mailbox.FlagJunk}} checked{{end}}>
+            <label for="idflag_junk">Junk</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_sent" name="flag_sent" type="checkbox"{{if .Mailbox.FlagSent}} checked{{end}}>
+            <label for="idflag_sent">Sent</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_trash" name="flag_trash" type="checkbox"{{if .Mailbox.FlagTrash}} checked{{end}}>
+            <label for="idflag_trash">Trash</label>
+        </div>
+        <div class="form-check">
+            <input id="idflag_important" name="flag_important" type="checkbox"{{if .Mailbox.FlagImportant}} checked{{end}}>
+            <label for="idflag_important">Important</label>
+        </div>
+
+        <div class="btn-row">
+            <input class="btn" type="submit" name="submit" value="Submit">
+            <input class="btn btn-cancel" type="submit" name="cancel" value="Cancel">
+        </div>
+    </form>
+</div>
+{{end}}
